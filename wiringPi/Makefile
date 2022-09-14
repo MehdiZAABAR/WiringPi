@@ -41,11 +41,17 @@ CFLAGS	+= $(DEBUG) $(DEFS) -Wformat=2 -Wall -Winline $(INCLUDE) -pipe -fPIC
 LIBS    =
 
 ifeq ($(PLATFORM),)
-  PLATFORM = OrangePi_2G-IOT
+  PLATFORM = OrangePi_I96
+  #PLATFORM = OrangePi_2G-IOT
   #PLATFORM = OrangePi_PC2
   #PLATFORM = OrangePi_A64
   #PLATFORM = OrangePi_H3
   #PLATFORM = OrangePi_ZERO
+endif
+
+ifeq ($(PLATFORM), OrangePi_I96)
+EXTRA_CFLAGS = -DCONFIG_ORANGEPI_I96
+EXTRA_CFLAGS += -DCONFIG_ORANGEPI
 endif
 
 ifeq ($(PLATFORM), OrangePi_2G-IOT)
@@ -89,6 +95,10 @@ SRC	=	wiringPi.c						\
 		max31855.c max5322.c					\
 		sn3218.c						\
 		drcSerial.c RaspberryPi.c
+
+ifeq ($(PLATFORM), OrangePi_I96)
+SRC += OrangePi.c
+endif
 
 ifeq ($(PLATFORM), OrangePi_2G-IOT)
 SRC += OrangePi.c

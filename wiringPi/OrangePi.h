@@ -1,14 +1,20 @@
 #ifndef _ORANGEPI_H
 #define _ORANGEPI_H
 
-#ifdef CONFIG_ORANGEPI_2G_IOT
+#if defined ( CONFIG_ORANGEPI_2G_IOT) || defined (CONFIG_ORANGEPI_I96)
 /********** OrangePi 2G-IOT *************/
-/*
- * GPIOA_BASE                         0x20930000
- * GPIOB_BASE                         0x20931000
- * GPIOC_BASE                         0x11A08000
- * GPIOD_BASE                         0x20932000
- */
+
+#define PROT_READ	0x1		/* Page can be read.  */
+#define PROT_WRITE	0x2		/* Page can be written.  */
+#define PROT_EXEC	0x4		/* Page can be executed.  */
+#define PROT_NONE	0x0		/* Page can not be accessed.  */
+#define MAP_SHARED	0x01		/* Share changes.  */
+#define RDA_IO_MUX_REG_BASE_ADDR	0x11A09000
+#define RDA_IO_MUX_PORTA_ADDR 		0x11A0900C
+#define RDA_IO_MUX_PORTB_ADDR 		0x11A09010
+#define RDA_IO_MUX_PORTC_ADDR 		0x11A09008
+#define RDA_IO_MUX_PORTD_ADDR 		0x11A09014
+#define PG_SIZE						4096
 
 /********* local data ************/
 #define GPIOA_BASE                         0x20930000
@@ -78,11 +84,15 @@
 #define GPIO_BASE          GPIOA_BASE
 #define ORANGEPI_MEM_INFO  MEM_INFO
 
-
-extern int pinToGpioOrangePi[64];
+#ifdef CONFIG_ORANGEPI_I96
+	#define PIN_ARRAY_SZ 133
+#else
+	#define PIN_ARRAY_SZ 64
+#endif
+extern int pinToGpioOrangePi[PIN_ARRAY_SZ];
 extern int physToGpioOrangePi[64];
-extern int physToPinOrangePi[64];
-extern int physToWpiOrangePi[64];
+extern int physToPinOrangePi[PIN_ARRAY_SZ];
+extern int physToWpiOrangePi[PIN_ARRAY_SZ];
 extern volatile uint32_t *OrangePi_gpio;
 extern volatile uint32_t *OrangePi_gpioC;
 
@@ -95,12 +105,17 @@ extern unsigned int readR(unsigned int addr);
 extern void writeR(unsigned int val, unsigned int addr);
 extern int OrangePi_digitalWrite(int pin, int value);
 extern int OrangePi_digitalRead(int pin);
+int RDA8810_GetPinModeInOutAlt(int pin);
+void UnmapIoMuxReg();
+unsigned int *MmapIoMuxReg();
+unsigned int IoMuxReadReg( unsigned int addr);
 
 #ifdef CONFIG_ORANGEPI
 extern const char *piModelNames[6];
+extern unsigned int *IoMuxMappedAddr;
 #endif
 
-#ifdef CONFIG_ORANGEPI_2G_IOT
+#if defined ( CONFIG_ORANGEPI_2G_IOT) || defined (CONFIG_ORANGEPI_I96)
 extern int ORANGEPI_PIN_MASK[4][32];
 #elif CONFIG_ORANGEPI_PC2
 extern int ORANGEPI_PIN_MASK[9][32];

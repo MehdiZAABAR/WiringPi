@@ -49,68 +49,70 @@ extern int wpMode;
 #ifndef CONFIG_ORANGEPI
 static int physToWpi [64] =
 {
-  -1,        // 0
-  -1,  -1,   // 1, 2
-   8,  -1,   // 3, 4
-   9,  -1,   // 5, 6
-   7,  15,   // 7, 8
-  -1,  16,   // 9, 10
-   0,   1,   //11, 12
-   2,  -1,   //13, 14
-   3,   4,   //15, 16
-  -1,   5,   //17, 18
-  12,  -1,   //19, 20
-  13,   6,   //21, 22
-  14,  10,   //23, 24
-  -1,  11,   //25, 26
-  30,  31,   //27, 28
-  21,  -1,   //29, 30
-  22,  26,   //31, 32
-  23,  -1,   //33, 34
-  24,  27,   //35, 36
-  25,  28,   //37, 38
-  -1,  29,   //39, 40
-   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //41-> 55
-   -1, -1, -1, -1, -1, -1, -1, -1 // 56-> 63
+		-1,        // 0
+		-1,  -1,   // 1, 2
+		8,  -1,   // 3, 4
+		9,  -1,   // 5, 6
+		7,  15,   // 7, 8
+		-1,  16,   // 9, 10
+		0,   1,   //11, 12
+		2,  -1,   //13, 14
+		3,   4,   //15, 16
+		-1,   5,   //17, 18
+		12,  -1,   //19, 20
+		13,   6,   //21, 22
+		14,  10,   //23, 24
+		-1,  11,   //25, 26
+		30,  31,   //27, 28
+		21,  -1,   //29, 30
+		22,  26,   //31, 32
+		23,  -1,   //33, 34
+		24,  27,   //35, 36
+		25,  28,   //37, 38
+		-1,  29,   //39, 40
+		-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, //41-> 55
+		-1, -1, -1, -1, -1, -1, -1, -1 // 56-> 63
 } ;
 #endif
 
 #ifndef CONFIG_ORANGEPI
 static char *physNames [64] =
 {
-  NULL,
+		NULL,
 
- "    3.3v", "5v      ",
- "   SDA.0", "5V      ",
- "   SCL.0", "0v      ",
- "  GPIO.7", "TxD3    ",
- "      0v", "RxD3    ",
- "    RxD2", "GPIO.1  ",
- "    TxD2", "0v      ",
- "    CTS2", "GPIO.4  ",
- "    3.3v", "GPIO.5  ",
- "    MOSI", "0v      ",
- "    MISO", "RTS2    ",
- "    SCLK", "CE0     ",
- "      0v", "GPIO.11 ",
- "   SDA.1", "SCL.1   ",
- " GPIO.21", "0v      ",
- " GPIO.22", "RTS1    ",
- " GPIO.23", "0v      ",
- " GPIO.24", "CTS1    ",
- " GPIO.25", "TxD1    ",
- "      0v", "RxD1    ",
-       NULL, NULL,
-       NULL, NULL,
-       NULL, NULL,
-       NULL, NULL,
-       NULL, NULL,
-  "GPIO.17", "GPIO.18",
-  "GPIO.19", "GPIO.20",
-   NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+		"    3.3v", "5v      ",
+		"   SDA.0", "5V      ",
+		"   SCL.0", "0v      ",
+		"  GPIO.7", "TxD3    ",
+		"      0v", "RxD3    ",
+		"    RxD2", "GPIO.1  ",
+		"    TxD2", "0v      ",
+		"    CTS2", "GPIO.4  ",
+		"    3.3v", "GPIO.5  ",
+		"    MOSI", "0v      ",
+		"    MISO", "RTS2    ",
+		"    SCLK", "CE0     ",
+		"      0v", "GPIO.11 ",
+		"   SDA.1", "SCL.1   ",
+		" GPIO.21", "0v      ",
+		" GPIO.22", "RTS1    ",
+		" GPIO.23", "0v      ",
+		" GPIO.24", "CTS1    ",
+		" GPIO.25", "TxD1    ",
+		"      0v", "RxD1    ",
+		NULL, NULL,
+		NULL, NULL,
+		NULL, NULL,
+		NULL, NULL,
+		NULL, NULL,
+		"GPIO.17", "GPIO.18",
+		"GPIO.19", "GPIO.20",
+		NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
 };
 #endif
 
+
+static char *MODE_IS_GPIO[ ] = { "IN", "OUT", "ALT"};
 static char *alts[] =
 {
   "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"
@@ -147,6 +149,7 @@ void readallPhys(int physPin)
 {
 	int pin;
 	int val;
+	int alt;
 
 	if (physPinToGpio(physPin) == -1)
 		printf(" |     |    ");
@@ -165,7 +168,11 @@ void readallPhys(int physPin)
 		else
 			pin = physToWpi[physPin];
 
-		printf(" | %4s", alts[getAlt(pin)]);
+		alt = getAlt(pin);
+		if(( alt <0)||(alt >2))
+			printf(" | UNK phy = %d pin %d mode %d alt %d", physPin, pin, wpMode, alt);
+		else
+			printf(" | %4s", MODE_IS_GPIO[alt]);
 		val = digitalRead(pin);
 		if (val == -1) 
 			printf(" | 0");
@@ -174,9 +181,9 @@ void readallPhys(int physPin)
 	}
 
 	/* Pin numbers: */
-	printf(" | %2d", physPin);
+	printf(" | %2d", physPin+1);
 	++physPin;
-	printf(" || %-2d", physPin);
+	printf(" || %-2d", physPin+1);
 
 	/* Same, reversed */
 
@@ -195,7 +202,11 @@ void readallPhys(int physPin)
 			printf(" | 0");
 		else 
 			printf(" | %d", val);
-		printf(" | %-4s", alts[getAlt(pin)]);
+		alt = getAlt(pin);
+		if(( alt <0)||(alt >2))
+			printf(" | UNK phy = %d pin %d mode %d alt %d", physPin, pin, wpMode, alt);
+		else
+			printf(" | %4s", MODE_IS_GPIO[alt]);
 	}
 
 	printf (" | %-5s", physNames[physPin]);
@@ -267,7 +278,7 @@ void abReadall (int model, int rev)
 	if (rev == PI_VERSION_2) {
 		printf(" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n");
 		for (pin = 51; pin <= 54; pin += 2)
-		readallPhys(pin);
+			readallPhys(pin);
 	}
 
 	printf(" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n");
@@ -288,10 +299,10 @@ void bPlusReadall (void)
 	printf(" +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+\n");
 	printf(" | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |\n");
 	printf(" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n");
-  
+
 	for (pin = 1; pin <= 40; pin += 2)
 		readallPhys (pin);
-	
+
 	printf(" +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+\n");
 	printf(" | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |\n");
 	printf(" +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+\n");

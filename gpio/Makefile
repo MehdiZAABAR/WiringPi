@@ -36,11 +36,17 @@ LDFLAGS	= -L$(DESTDIR)$(PREFIX)/lib
 LIBS    = -lwiringPi -lwiringPiDev -lpthread -lm
 
 ifeq ($(PLATFORM),)
-  PLATFORM = OrangePi_2G-IOT
+  PLATFORM = OrangePi_I96
+  #PLATFORM = OrangePi_2G-IOT
   #PLATFORM = OrangePi_PC2
   #PLATFORM = OrangePi_A64
   #PLATFORM = OrangePi_H5
   #PLATFORM = OrangePi_ZERO
+endif
+
+ifeq ($(PLATFORM), OrangePi_I96)
+EXTRA_CFLAGS = -DCONFIG_ORANGEPI_I96
+EXTRA_CFLAGS += -DCONFIG_ORANGEPI
 endif
 
 ifeq ($(PLATFORM), OrangePi_2G-IOT)
@@ -72,6 +78,10 @@ endif
 ###############################################################################
 
 SRC	=	gpio.c extensions.c readall.c pins.c
+
+ifeq ($(PLATFORM), OrangePi_I96)
+  SRC += OrangePi.c
+endif
 
 ifeq ($(PLATFORM), OrangePi_2G-IOT)
   SRC += OrangePi.c
