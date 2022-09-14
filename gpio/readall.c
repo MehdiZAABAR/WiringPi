@@ -112,7 +112,7 @@ static char *physNames [64] =
 #endif
 
 
-static char *MODE_IS_GPIO[ ] = { "IN", "OUT", "ALT"};
+static char *MODE_IS_GPIO[ ] = { "OUT", "IN", "ALT"};
 static char *alts[] =
 {
   "IN", "OUT", "ALT5", "ALT4", "ALT0", "ALT1", "ALT2", "ALT3"
