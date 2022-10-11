@@ -21,7 +21,7 @@ char *physNames[64] =
 		,"UART1.RX "
 		,"SPI2.DO  "
 		,"I2C2.SCL "
-		,"SPI2.CS0 "
+		,"I2S_LRCK "
 		,"I2C2.SDA "
 		,"I2S.BCK  "
 		,"I2C3.SCL "
